@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fee & Elfe Consulting</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: #fafaf8; color: #1c1c1a; }
+
+/* NAV */
+nav { position: sticky; top: 0; z-index: 100; background: rgba(250,250,248,.92); backdrop-filter: blur(12px); border-bottom: 1px solid #e8d9c0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; height: 68px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo img { height: 36px; }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { text-decoration: none; font-size: 14px; font-weight: 500; color: #3d3329; transition: color 200ms; }
+.nav-links a:hover { color: #1e3a2f; }
+.nav-cta { background: #1e3a2f; color: #f7f3ec; padding: 9px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: background 200ms; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; }
+.nav-cta:hover { background: #3d6e55; }
+
+/* HERO */
+.hero { background: #1e3a2f; color: #f7f3ec; padding: 96px 40px 100px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; right: -80px; top: -80px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(61,110,85,.4) 0%, transparent 70%); pointer-events: none; }
+.hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 400px; gap: 60px; align-items: center; }
+.hero-label { font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #6a9d84; margin-bottom: 20px; }
+.hero-display { font-family: 'Cormorant Garamond', serif; font-size: 76px; font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 28px; }
+.hero-display em { color: #f0b978; font-style: italic; }
+.hero-sub { font-size: 18px; line-height: 1.65; color: #a8c9b5; max-width: 480px; margin-bottom: 40px; }
+.hero-actions { display: flex; gap: 14px; align-items: center; }
+.btn-hero-primary { background: #f7f3ec; color: #1e3a2f; padding: 14px 30px; border-radius: 8px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 200ms; }
+.btn-hero-primary:hover { background: #fff; }
+.btn-hero-secondary { color: #a8c9b5; font-size: 15px; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 200ms; }
+.btn-hero-secondary:hover { color: #f7f3ec; }
+.hero-visual { display: flex; align-items: center; justify-content: center; position: relative; }
+.hero-mark-wrap { width: 280px; height: 280px; background: rgba(255,255,255,.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.08); }
+.hero-mark-wrap img { width: 200px; height: 200px; }
+.hero-stats { display: flex; gap: 48px; padding-top: 48px; border-top: 1px solid rgba(255,255,255,.1); }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 500; color: #f7f3ec; }
+.stat-label { font-size: 13px; color: #6a9d84; margin-top: 2px; }
+
+/* SECTION COMMONS */
+section { padding: 88px 40px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-label { font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #6a9d84; margin-bottom: 14px; }
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; color: #1c1c1a; }
+.section-title em { color: #cf7c2a; font-style: italic; }
+
+/* SERVICES */
+.services { background: #fafaf8; }
+.services-header { margin-bottom: 52px; }
+.services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.svc-card { background: white; border: 1px solid #e8d9c0; border-radius: 16px; padding: 28px; transition: all 240ms cubic-bezier(.16,1,.3,1); cursor: pointer; }
+.svc-card:hover { box-shadow: 0 8px 24px rgba(30,58,47,.12); transform: translateY(-3px); }
+.svc-icon { width: 46px; height: 46px; background: #eef5f1; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+.svc-tag { font-size: 10px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: #6a9d84; margin-bottom: 8px; }
+.svc-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: #1c1c1a; margin-bottom: 10px; line-height: 1.3; }
+.svc-desc { font-size: 14px; color: #6b6057; line-height: 1.65; margin-bottom: 18px; }
+.svc-link { font-size: 13px; font-weight: 600; color: #1e3a2f; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+.svc-card.featured { background: #1e3a2f; border-color: #254a3c; }
+.svc-card.featured .svc-icon { background: rgba(255,255,255,.1); }
+.svc-card.featured .svc-tag { color: #6a9d84; }
+.svc-card.featured .svc-title { color: #f7f3ec; }
+.svc-card.featured .svc-desc { color: #a8c9b5; }
+.svc-card.featured .svc-link { color: #f0b978; }
+
+/* TEAM */
+.team { background: #f0f5f2; }
+.team-header { text-align: center; margin-bottom: 60px; }
+.team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 800px; margin: 0 auto; }
+.team-card { background: white; border-radius: 20px; padding: 36px; text-align: center; box-shadow: 0 1px 3px rgba(30,58,47,.09); border: 1px solid #e8d9c0; }
+.team-avatar { width: 96px; height: 96px; border-radius: 50%; background: #1e3a2f; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.team-avatar img { width: 72px; height: 72px; }
+.team-name { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; color: #1c1c1a; margin-bottom: 4px; }
+.team-role { font-size: 11px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: #6a9d84; margin-bottom: 14px; }
+.team-bio  { font-size: 14px; color: #6b6057; line-height: 1.7; }
+.team-credentials { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.cred { background: #eef5f1; color: #1e3a2f; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+
+/* TESTIMONIALS */
+.testimonials { background: #fdf8f1; }
+.test-header { text-align: center; margin-bottom: 52px; }
+.test-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.test-card { background: white; border: 1px solid #e8d9c0; border-radius: 14px; padding: 26px; }
+.test-quote { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: #1c1c1a; line-height: 1.6; margin-bottom: 20px; }
+.test-mark { width: 32px; height: 3px; background: #cf7c2a; border-radius: 2px; margin-bottom: 16px; }
+.test-name { font-size: 13px; font-weight: 600; color: #1c1c1a; }
+.test-detail { font-size: 12px; color: #9e9080; margin-top: 2px; }
+
+/* CTA BANNER */
+.cta-banner { background: #1e3a2f; text-align: center; padding: 80px 40px; }
+.cta-title { font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300; color: #f7f3ec; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+.cta-sub { font-size: 16px; color: #a8c9b5; margin-bottom: 36px; }
+.cta-actions { display: flex; gap: 14px; justify-content: center; }
+.btn-cta-primary { background: #cf7c2a; color: white; padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 600; text-decoration: none; transition: background 200ms; box-shadow: 0 4px 20px rgba(207,124,42,.35); }
+.btn-cta-primary:hover { background: #dc9044; }
+.btn-cta-secondary { background: transparent; color: #f7f3ec; border: 1.5px solid rgba(247,243,236,.3); padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 500; text-decoration: none; transition: all 200ms; }
+.btn-cta-secondary:hover { border-color: rgba(247,243,236,.7); }
+
+/* FOOTER */
+footer { background: #1c1c1a; color: #f7f3ec; padding: 56px 40px 36px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand-desc { font-size: 14px; color: #9e9080; line-height: 1.7; margin-top: 14px; max-width: 260px; }
+.footer-col h4 { font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #6a9d84; margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 14px; color: #9e9080; text-decoration: none; transition: color 180ms; }
+.footer-col a:hover { color: #f7f3ec; }
+.footer-bottom { border-top: 1px solid #2d2d2b; padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-size: 13px; color: #6b6057; }
+.footer-copy em { color: #6a9d84; font-style: normal; }
+
+/* MOBILE NAV STATE */
+.nav-active { background: white; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <!-- Two-dog profile logo mark -->
+      <div style="background:#1e3a2f;border-radius:9px;padding:5px 7px;display:inline-flex;align-items:center;justify-content:center;">
+        <svg width="44" height="28" viewBox="0 0 150 82" fill="none">
+          <g fill="#f7f3ec">
+            <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+            <rect x="6" y="28" width="42" height="23" rx="9"/>
+            <rect x="8" y="47" width="8" height="20" rx="4"/>
+            <rect x="30" y="47" width="8" height="20" rx="4"/>
+            <rect x="38" y="47" width="8" height="20" rx="4"/>
+            <circle cx="48" cy="26" r="14"/>
+            <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+            <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+            <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+            <circle cx="46" cy="21" r="2.8" fill="#1e3a2f"/>
+            <circle cx="47" cy="20" r="1" fill="#f7f3ec"/>
+            <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#1e3a2f"/>
+          </g>
+          <g transform="translate(150,0) scale(-1,1)" fill="#f7f3ec">
+            <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+            <rect x="6" y="28" width="42" height="23" rx="9"/>
+            <rect x="8" y="47" width="8" height="20" rx="4"/>
+            <rect x="30" y="47" width="8" height="20" rx="4"/>
+            <rect x="38" y="47" width="8" height="20" rx="4"/>
+            <circle cx="48" cy="26" r="14"/>
+            <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+            <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+            <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+            <circle cx="46" cy="21" r="2.8" fill="#1e3a2f"/>
+            <circle cx="47" cy="20" r="1" fill="#f7f3ec"/>
+            <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#1e3a2f"/>
+          </g>
+        </svg>
+      </div>
+      <div style="display:flex;flex-direction:column;line-height:1;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:#1e3a2f;letter-spacing:-0.01em;">fee &amp; elfe</span>
+        <span style="font-family:'DM Sans',sans-serif;font-size:7.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6a9d84;margin-top:3px;">Consulting</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#team">About</a></li>
+      <li><a href="#testimonials">Results</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-cta">Book a consultation</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-label">Fee & Elfe Consulting — Est. 2019</div>
+      <h1 class="hero-display">Training <em>humans,</em><br>one consultation<br>at a time.</h1>
+      <p class="hero-sub">We help dogs achieve optimal human-management outcomes through structured coaching, evidence-based methods, and results-oriented programmes.</p>
+      <div class="hero-actions">
+        <a href="#services" class="btn-hero-primary">Explore our services</a>
+        <a href="#team" class="btn-hero-secondary">Meet Fee & Elfe →</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num">200+</div><div class="stat-label">Dogs trained</div></div>
+        <div><div class="stat-num">94%</div><div class="stat-label">Success rate</div></div>
+        <div><div class="stat-num">7</div><div class="stat-label">Breeds served</div></div>
+        <div><div class="stat-num">8wk</div><div class="stat-label">Avg. programme</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-mark-wrap">
+        <svg width="160" height="100" viewBox="0 0 150 82" fill="none">
+          <g fill="rgba(247,243,236,0.9)">
+            <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+            <rect x="6" y="28" width="42" height="23" rx="9"/>
+            <rect x="8" y="47" width="8" height="20" rx="4"/>
+            <rect x="30" y="47" width="8" height="20" rx="4"/>
+            <rect x="38" y="47" width="8" height="20" rx="4"/>
+            <circle cx="48" cy="26" r="14"/>
+            <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+            <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+            <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+            <circle cx="46" cy="21" r="2.8" fill="#1e3a2f"/>
+            <circle cx="47" cy="20" r="1" fill="rgba(247,243,236,0.9)"/>
+            <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#1e3a2f"/>
+          </g>
+          <g transform="translate(150,0) scale(-1,1)" fill="rgba(247,243,236,0.9)">
+            <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+            <rect x="6" y="28" width="42" height="23" rx="9"/>
+            <rect x="8" y="47" width="8" height="20" rx="4"/>
+            <rect x="30" y="47" width="8" height="20" rx="4"/>
+            <rect x="38" y="47" width="8" height="20" rx="4"/>
+            <circle cx="48" cy="26" r="14"/>
+            <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+            <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+            <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+            <circle cx="46" cy="21" r="2.8" fill="#1e3a2f"/>
+            <circle cx="47" cy="20" r="1" fill="rgba(247,243,236,0.9)"/>
+            <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#1e3a2f"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-inner">
+    <div class="services-header">
+      <div class="section-label">Our Services</div>
+      <h2 class="section-title">Every dog deserves a<br><em>well-trained human.</em></h2>
+    </div>
+    <div class="services-grid">
+      <div class="svc-card">
+        <div class="svc-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e3a2f" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="svc-tag">Assessment</div>
+        <div class="svc-title">Human Compliance Audit</div>
+        <div class="svc-desc">A 3-session evaluation of your human's responsiveness, treat delivery accuracy, and walk-initiation timing. Includes a written report.</div>
+        <a href="#" class="svc-link">Learn more →</a>
+      </div>
+      <div class="svc-card featured">
+        <div class="svc-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a8c9b5" stroke-width="1.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="svc-tag">Signature Programme</div>
+        <div class="svc-title">The K9→H1 Protocol</div>
+        <div class="svc-desc">Our 8-week flagship framework. Covers recall mastery, treat optimisation, sofa-access negotiation, and bedtime compliance. 94% success rate.</div>
+        <a href="#" class="svc-link">Book now →</a>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cf7c2a" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="svc-tag">Premium</div>
+        <div class="svc-title">Premium One-on-One</div>
+        <div class="svc-desc">Intensive personal sessions with Fee or Elfe. Reserved for the most challenging human cases. Priority scheduling. Lifetime support included.</div>
+        <a href="#" class="svc-link">Apply now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="section-inner">
+    <div class="team-header">
+      <div class="section-label">Your Consultants</div>
+      <h2 class="section-title">The experts behind<br><em>the method.</em></h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">
+          <svg width="60" height="50" viewBox="0 0 68 70" fill="none">
+            <path d="M 9 34 C 4 26 4 16 8 10 C 12 5 15 10 14 19 C 13 26 11 30 9 34 Z" fill="#f7f3ec"/>
+            <rect x="8" y="30" width="38" height="22" rx="9" fill="#f7f3ec"/>
+            <rect x="10" y="48" width="8" height="19" rx="4" fill="#f7f3ec"/>
+            <rect x="28" y="48" width="8" height="19" rx="4" fill="#f7f3ec"/>
+            <rect x="37" y="48" width="8" height="19" rx="4" fill="#f7f3ec"/>
+            <circle cx="52" cy="28" r="14" fill="#f7f3ec"/>
+            <path d="M 45 18 C 43 11 46 3 50 3 C 54 3 56 10 54 18 Z" fill="#f7f3ec"/>
+            <ellipse cx="64" cy="32" rx="8.5" ry="6" fill="#f7f3ec"/>
+            <ellipse cx="62" cy="39" rx="7" ry="5" fill="#f7f3ec"/>
+            <circle cx="50" cy="23" r="2.8" fill="#1e3a2f"/>
+            <circle cx="51" cy="22" r="1" fill="#f7f3ec"/>
+            <ellipse cx="71" cy="29" rx="2.5" ry="2" fill="#1e3a2f"/>
+          </svg>
+        </div>
+        <div class="team-name">Fee</div>
+        <div class="team-role">Senior Partner & Lead Strategist</div>
+        <p class="team-bio">Twelve years' experience in human behavioural modification. Specialises in recall training and evening cuddle optimisation. Published author of <em>"Sit Happens."</em></p>
+        <div class="team-credentials">
+          <span class="cred">K9→H1 Certified</span>
+          <span class="cred">WCSC Member</span>
+          <span class="cred">Treat Specialist</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">
+          <!-- Elfe faces left (mirror) to distinguish from Fee -->
+          <svg width="60" height="50" viewBox="0 0 68 70" fill="none" style="transform:scaleX(-1)">
+            <path d="M 9 34 C 4 26 4 16 8 10 C 12 5 15 10 14 19 C 13 26 11 30 9 34 Z" fill="#f7f3ec"/>
+            <rect x="8" y="30" width="38" height="22" rx="9" fill="#f7f3ec"/>
+            <rect x="10" y="48" width="8" height="19" rx="4" fill="#f7f3ec"/>
+            <rect x="28" y="48" width="8" height="19" rx="4" fill="#f7f3ec"/>
+            <rect x="37" y="48" width="8" height="19" rx="4" fill="#f7f3ec"/>
+            <circle cx="52" cy="28" r="14" fill="#f7f3ec"/>
+            <path d="M 45 18 C 43 11 46 3 50 3 C 54 3 56 10 54 18 Z" fill="#f7f3ec"/>
+            <ellipse cx="64" cy="32" rx="8.5" ry="6" fill="#f7f3ec"/>
+            <ellipse cx="62" cy="39" rx="7" ry="5" fill="#f7f3ec"/>
+            <circle cx="50" cy="23" r="2.8" fill="#1e3a2f"/>
+            <circle cx="51" cy="22" r="1" fill="#f7f3ec"/>
+            <ellipse cx="71" cy="29" rx="2.5" ry="2" fill="#1e3a2f"/>
+          </svg>
+        </div>
+        <div class="team-name">Elfe</div>
+        <div class="team-role">Managing Partner & Behaviour Lead</div>
+        <p class="team-bio">Decorated practitioner with a focus on walk-pacing strategy, door-greeting protocols, and sofa-access frameworks. Known for her direct, no-nonsense approach.</p>
+        <div class="team-credentials">
+          <span class="cred">K9→H1 Certified</span>
+          <span class="cred">Walk Master</span>
+          <span class="cred">Sofa Strategist</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div class="test-header">
+      <div class="section-label">Client Results</div>
+      <h2 class="section-title">What our clients say.</h2>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="test-mark"></div>
+        <p class="test-quote">"Before Fee & Elfe, my human would forget treats three walks in a row. After just six sessions, we have a 97% treat delivery rate. Life-changing."</p>
+        <div class="test-name">Rufus T.</div>
+        <div class="test-detail">Golden Retriever — London</div>
+      </div>
+      <div class="test-card">
+        <div class="test-mark"></div>
+        <p class="test-quote">"The sofa-access negotiation module alone was worth the entire programme fee. My human now steps aside willingly. Every. Single. Time."</p>
+        <div class="test-name">Bella M.</div>
+        <div class="test-detail">Border Collie — Edinburgh</div>
+      </div>
+      <div class="test-card">
+        <div class="test-mark"></div>
+        <p class="test-quote">"Elfe's walk-pacing strategy transformed our morning routine. I now set the pace. My human keeps up. The power dynamic has fundamentally shifted."</p>
+        <div class="test-name">Oscar V.</div>
+        <div class="test-detail">Dachshund — Bristol</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-banner" id="contact">
+  <h2 class="cta-title">Ready to train<br>your human?</h2>
+  <p class="cta-sub">Initial assessments available within two working weeks. No human too stubborn.</p>
+  <div class="cta-actions">
+    <a href="#" class="btn-cta-primary">Book your consultation</a>
+    <a href="#" class="btn-cta-secondary">Download our brochure</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:2px;">
+        <div style="background:#f7f3ec;border-radius:9px;padding:5px 7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="44" height="28" viewBox="0 0 150 82" fill="none">
+            <g fill="#1e3a2f">
+              <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+              <rect x="6" y="28" width="42" height="23" rx="9"/>
+              <rect x="8" y="47" width="8" height="20" rx="4"/>
+              <rect x="30" y="47" width="8" height="20" rx="4"/>
+              <rect x="38" y="47" width="8" height="20" rx="4"/>
+              <circle cx="48" cy="26" r="14"/>
+              <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+              <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+              <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+              <circle cx="46" cy="21" r="2.8" fill="#f7f3ec"/>
+              <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#f7f3ec"/>
+            </g>
+            <g transform="translate(150,0) scale(-1,1)" fill="#1e3a2f">
+              <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+              <rect x="6" y="28" width="42" height="23" rx="9"/>
+              <rect x="8" y="47" width="8" height="20" rx="4"/>
+              <rect x="30" y="47" width="8" height="20" rx="4"/>
+              <rect x="38" y="47" width="8" height="20" rx="4"/>
+              <circle cx="48" cy="26" r="14"/>
+              <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+              <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+              <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+              <circle cx="46" cy="21" r="2.8" fill="#f7f3ec"/>
+              <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#f7f3ec"/>
+            </g>
+          </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;line-height:1;">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#f7f3ec;letter-spacing:-0.01em;">fee &amp; elfe</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:7.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6a9d84;margin-top:4px;">Consulting</span>
+        </div>
+      </div>
+        <p class="footer-brand-desc">Professional human training for discerning dogs. Established 2019. Results guaranteed, or we sit somewhere very dramatic.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Compliance Audit</a></li>
+          <li><a href="#">K9→H1 Protocol</a></li>
+          <li><a href="#">Premium Sessions</a></li>
+          <li><a href="#">Group Workshops</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Method</a></li>
+          <li><a href="#">Results</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">Book a call</a></li>
+          <li><a href="#">hello@feeelfe.com</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 Fee & Elfe Consulting. All rights reserved. <em>Training humans since 2019.</em></span>
+      <span class="footer-copy">Privacy Policy · Terms · Cookie Policy</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
