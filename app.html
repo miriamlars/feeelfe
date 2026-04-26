@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fee & Elfe — Mobile App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+body { background: #e8d9c0; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 32px; }
+
+.stage { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+
+/* Phone frame */
+.phone { width: 375px; height: 780px; background: #fafaf8; border-radius: 48px; box-shadow: 0 40px 80px rgba(28,28,26,.25), 0 0 0 1px rgba(28,28,26,.12); overflow: hidden; position: relative; flex-shrink: 0; }
+.phone-screen { width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+
+/* Status bar */
+.status-bar { height: 44px; background: #1e3a2f; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+.status-bar.light { background: #fafaf8; }
+.status-bar.cream { background: #f7f3ec; }
+.status-time { font-size: 15px; font-weight: 600; color: #f7f3ec; }
+.status-time.dark { color: #1c1c1a; }
+.status-icons { display: flex; gap: 6px; align-items: center; }
+
+/* Tab bar */
+.tab-bar { height: 82px; background: white; border-top: 1px solid #e8d9c0; display: flex; align-items: flex-start; padding-top: 10px; flex-shrink: 0; }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 0; }
+.tab-icon { width: 24px; height: 24px; }
+.tab-label { font-size: 10px; font-weight: 500; color: #9e9080; }
+.tab.active .tab-label { color: #1e3a2f; }
+
+/* Scroll content */
+.scroll-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.scroll-content::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+/* ── ICONS ── */
+const Icon = ({ d, size = 24, stroke = "#1c1c1a", fill = "none", strokeWidth = 1.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    {Array.isArray(d) ? d.map((p,i) => <path key={i} d={p}/>) : <path d={d}/>}
+  </svg>
+);
+
+const HomeIcon = ({active}) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill={active?"#eef5f1":"none"} stroke={active?"#1e3a2f":"#9e9080"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/>
+  </svg>
+);
+const ServicesIcon = ({active}) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active?"#1e3a2f":"#9e9080"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+  </svg>
+);
+const ProgressIcon = ({active}) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active?"#1e3a2f":"#9e9080"} strokeWidth="1.5" strokeLinecap="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </svg>
+);
+const ProfileIcon = ({active}) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active?"#1e3a2f":"#9e9080"} strokeWidth="1.5" strokeLinecap="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+
+/* ── WESTIE MARK ── */
+const WestieMark = ({size=48, bg="#1e3a2f"}) => (
+  <div style={{width:size,height:size*0.75,background:bg,borderRadius:size*0.18+'px',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+    <svg width={size*0.85} height={size*0.52} viewBox="0 0 150 82" fill="none">
+      <g fill="#f7f3ec">
+        <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+        <rect x="6" y="28" width="42" height="23" rx="9"/>
+        <rect x="8" y="47" width="8" height="20" rx="4"/>
+        <rect x="30" y="47" width="8" height="20" rx="4"/>
+        <rect x="38" y="47" width="8" height="20" rx="4"/>
+        <circle cx="48" cy="26" r="14"/>
+        <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+        <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+        <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+        <circle cx="46" cy="21" r="2.8" fill={bg}/>
+        <circle cx="47" cy="20" r="1" fill="#f7f3ec"/>
+        <ellipse cx="67" cy="27" rx="2.5" ry="2" fill={bg}/>
+      </g>
+      <g transform="translate(150,0) scale(-1,1)" fill="#f7f3ec">
+        <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+        <rect x="6" y="28" width="42" height="23" rx="9"/>
+        <rect x="8" y="47" width="8" height="20" rx="4"/>
+        <rect x="30" y="47" width="8" height="20" rx="4"/>
+        <rect x="38" y="47" width="8" height="20" rx="4"/>
+        <circle cx="48" cy="26" r="14"/>
+        <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+        <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+        <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+        <circle cx="46" cy="21" r="2.8" fill={bg}/>
+        <circle cx="47" cy="20" r="1" fill="#f7f3ec"/>
+        <ellipse cx="67" cy="27" rx="2.5" ry="2" fill={bg}/>
+      </g>
+    </svg>
+  </div>
+);
+
+/* ── HOME SCREEN ── */
+function HomeScreen() {
+  const sessions = [
+    { title: "Recall Mastery — Session 4", consultant: "Elfe", time: "Tomorrow, 10:00", status: "upcoming" },
+    { title: "Treat Delivery Audit", consultant: "Fee", time: "Thu 30 Apr, 14:00", status: "scheduled" },
+  ];
+  return (
+    <div style={{background:'#fafaf8'}}>
+      {/* Header */}
+      <div style={{background:'#1e3a2f',padding:'20px 24px 32px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+          <div>
+            <p style={{fontSize:12,color:'#6a9d84',fontWeight:600,letterSpacing:'.1em',textTransform:'uppercase',marginBottom:4}}>Good morning</p>
+            <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:500,color:'#f7f3ec',lineHeight:1.2}}>Rufus T.</h1>
+          </div>
+          <WestieMark size={48}/>
+        </div>
+        {/* Progress card */}
+        <div style={{background:'rgba(255,255,255,.08)',borderRadius:14,padding:'16px 18px',border:'1px solid rgba(255,255,255,.1)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+            <span style={{fontSize:12,fontWeight:600,color:'#a8c9b5',letterSpacing:'.1em',textTransform:'uppercase'}}>K9→H1 Protocol</span>
+            <span style={{fontSize:12,color:'#6a9d84',fontWeight:600}}>Week 5 of 8</span>
+          </div>
+          <div style={{background:'rgba(255,255,255,.1)',borderRadius:99,height:6,marginBottom:8}}>
+            <div style={{background:'#f0b978',width:'62%',height:'100%',borderRadius:99}}/>
+          </div>
+          <div style={{display:'flex',justifyContent:'space-between'}}>
+            <span style={{fontSize:12,color:'#6a9d84'}}>62% complete</span>
+            <span style={{fontSize:12,color:'#f0b978',fontWeight:600}}>On track</span>
+          </div>
+        </div>
+      </div>
+      <div style={{padding:'20px 20px 8px'}}>
+        {/* Quick stats */}
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,marginBottom:24}}>
+          {[['Sessions','12'],['Streak','5d'],['Score','94%']].map(([l,v])=>(
+            <div key={l} style={{background:'white',borderRadius:12,padding:'14px 14px',border:'1px solid #e8d9c0',textAlign:'center'}}>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:500,color:'#1e3a2f',lineHeight:1}}>{v}</div>
+              <div style={{fontSize:11,color:'#9e9080',marginTop:4}}>{l}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Upcoming */}
+        <div style={{marginBottom:6,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <span style={{fontSize:12,fontWeight:600,letterSpacing:'.12em',textTransform:'uppercase',color:'#9e9080'}}>Upcoming Sessions</span>
+          <span style={{fontSize:12,color:'#3d6e55',fontWeight:600}}>See all</span>
+        </div>
+        {sessions.map((s,i)=>(
+          <div key={i} style={{background:'white',borderRadius:12,padding:'14px 16px',border:'1px solid #e8d9c0',marginTop:10,display:'flex',gap:12,alignItems:'center'}}>
+            <div style={{width:42,height:42,background:'#eef5f1',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e3a2f" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:14,fontWeight:600,color:'#1c1c1a',marginBottom:2}}>{s.title}</div>
+              <div style={{fontSize:12,color:'#9e9080'}}>with {s.consultant} · {s.time}</div>
+            </div>
+            <span style={{background:'#eef5f1',color:'#1e3a2f',fontSize:10,fontWeight:600,padding:'3px 8px',borderRadius:99}}>{s.status}</span>
+          </div>
+        ))}
+
+        {/* Tip */}
+        <div style={{background:'#fdf1e3',borderRadius:12,padding:'14px 16px',marginTop:16,border:'1px solid #f0b978',display:'flex',gap:10,alignItems:'flex-start'}}>
+          <div style={{width:32,height:32,background:'#cf7c2a',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div style={{fontSize:12,fontWeight:700,color:'#a6611e',marginBottom:3}}>Today's Tip from Fee</div>
+            <div style={{fontSize:12,color:'#6b6057',lineHeight:1.55}}>"Maintain eye contact during the treat-delivery window. Humans respond 40% better under direct observation."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── SERVICES SCREEN ── */
+function ServicesScreen() {
+  const [selected, setSelected] = useState(null);
+  const services = [
+    { tag:'Assessment', title:'Human Compliance Audit', desc:'3-session evaluation covering responsiveness, treat delivery, and walk timing.', price:'£280', weeks:3, icon:'clipboard', badge:'Popular' },
+    { tag:'Signature', title:'The K9→H1 Protocol', desc:'8-week flagship programme. The gold standard in human training.', price:'£640', weeks:8, icon:'zap', badge:'Best Value', featured:true },
+    { tag:'Premium', title:'One-on-One Intensive', desc:'Personal sessions with Fee or Elfe. For the most challenging cases.', price:'£980', weeks:6, icon:'star', badge:'Limited' },
+    { tag:'Workshop', title:'Group Pack Sessions', desc:'Train alongside other dogs. Shared learning, reduced fees.', price:'£180', weeks:4, icon:'users', badge:null },
+  ];
+  const iconPath = {
+    clipboard: ["M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2","M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2","M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2","M12 12h.01","M12 16h.01"],
+    zap: ["M13 2 3 14h9l-1 8 10-12h-9l1-8z"],
+    star: ["M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"],
+    users: ["M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2","M23 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"],
+  };
+  return (
+    <div style={{background:'#fafaf8',padding:'20px 20px 8px'}}>
+      <div style={{marginBottom:20}}>
+        <p style={{fontSize:11,fontWeight:600,letterSpacing:'.15em',textTransform:'uppercase',color:'#6a9d84',marginBottom:6}}>Our Services</p>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:500,color:'#1c1c1a',lineHeight:1.2}}>Choose your path<br/>to a trained human.</h2>
+      </div>
+      {services.map((s,i)=>(
+        <div key={i} onClick={()=>setSelected(selected===i?null:i)} style={{background:s.featured?'#1e3a2f':'white',borderRadius:14,padding:'16px',border:`1px solid ${s.featured?'#254a3c':'#e8d9c0'}`,marginBottom:10,cursor:'pointer',transition:'all 200ms'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+            <div style={{display:'flex',gap:10,alignItems:'center'}}>
+              <div style={{width:36,height:36,background:s.featured?'rgba(255,255,255,.12)':'#eef5f1',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={s.featured?'#a8c9b5':'#1e3a2f'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  {iconPath[s.icon].map((p,j)=><path key={j} d={p}/>)}
+                </svg>
+              </div>
+              <div>
+                <div style={{fontSize:10,fontWeight:600,letterSpacing:'.12em',textTransform:'uppercase',color:s.featured?'#6a9d84':'#6a9d84',marginBottom:2}}>{s.tag}</div>
+                <div style={{fontSize:15,fontWeight:600,color:s.featured?'#f7f3ec':'#1c1c1a',lineHeight:1.25}}>{s.title}</div>
+              </div>
+            </div>
+            <div style={{textAlign:'right',flexShrink:0}}>
+              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:500,color:s.featured?'#f0b978':'#1e3a2f'}}>{s.price}</div>
+              {s.badge && <span style={{background:s.featured?'rgba(240,185,120,.2)':'#eef5f1',color:s.featured?'#f0b978':'#1e3a2f',fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:99}}>{s.badge}</span>}
+            </div>
+          </div>
+          {selected===i && (
+            <div>
+              <p style={{fontSize:13,color:s.featured?'#a8c9b5':'#6b6057',lineHeight:1.6,marginBottom:12}}>{s.desc}</p>
+              <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:12}}>
+                <span style={{background:s.featured?'rgba(255,255,255,.1)':'#eef5f1',color:s.featured?'#a8c9b5':'#1e3a2f',fontSize:11,padding:'3px 10px',borderRadius:99}}>{s.weeks} weeks</span>
+              </div>
+              <button style={{width:'100%',background:s.featured?'#f7f3ec':'#1e3a2f',color:s.featured?'#1e3a2f':'#f7f3ec',border:'none',borderRadius:10,padding:'12px',fontSize:14,fontWeight:600,fontFamily:"'DM Sans',sans-serif",cursor:'pointer'}}>
+                Book this programme
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ── PROGRESS SCREEN ── */
+function ProgressScreen() {
+  const modules = [
+    { name: 'Treat Delivery', score: 94, sessions: 4 },
+    { name: 'Walk Pacing', score: 78, sessions: 3 },
+    { name: 'Recall Mastery', score: 61, sessions: 4 },
+    { name: 'Sofa Access', score: 45, sessions: 2 },
+    { name: 'Bedtime Protocol', score: 30, sessions: 1 },
+  ];
+  return (
+    <div style={{background:'#fafaf8',padding:'20px 20px 8px'}}>
+      <p style={{fontSize:11,fontWeight:600,letterSpacing:'.15em',textTransform:'uppercase',color:'#6a9d84',marginBottom:6}}>Progress</p>
+      <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:28,fontWeight:500,color:'#1c1c1a',lineHeight:1.2,marginBottom:20}}>Your human's<br/>training results.</h2>
+
+      {/* Overall ring */}
+      <div style={{background:'#1e3a2f',borderRadius:16,padding:'20px',marginBottom:20,display:'flex',gap:20,alignItems:'center'}}>
+        <div style={{position:'relative',width:80,height:80,flexShrink:0}}>
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="8"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="#f0b978" strokeWidth="8" strokeDasharray={`${2*Math.PI*30*0.62} ${2*Math.PI*30}`} strokeLinecap="round" transform="rotate(-90 40 40)"/>
+          </svg>
+          <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:500,color:'#f7f3ec',lineHeight:1}}>62%</span>
+          </div>
+        </div>
+        <div>
+          <div style={{fontSize:12,color:'#6a9d84',fontWeight:600,letterSpacing:'.1em',textTransform:'uppercase',marginBottom:4}}>Overall Score</div>
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,color:'#f7f3ec',fontWeight:500,marginBottom:4}}>Good Progress</div>
+          <div style={{fontSize:12,color:'#a8c9b5',lineHeight:1.5}}>Human showing improvement across 3 of 5 modules.</div>
+        </div>
+      </div>
+
+      {/* Module list */}
+      <div style={{fontSize:11,fontWeight:600,letterSpacing:'.12em',textTransform:'uppercase',color:'#9e9080',marginBottom:12}}>Module Breakdown</div>
+      {modules.map((m,i)=>(
+        <div key={i} style={{marginBottom:14}}>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+            <span style={{fontSize:13,fontWeight:500,color:'#1c1c1a'}}>{m.name}</span>
+            <span style={{fontSize:12,fontWeight:700,color: m.score>=70?'#2e6b47':m.score>=50?'#cf7c2a':'#8b3030'}}>{m.score}%</span>
+          </div>
+          <div style={{background:'#e8d9c0',borderRadius:99,height:6}}>
+            <div style={{background: m.score>=70?'#3d6e55':m.score>=50?'#cf7c2a':'#c47070', width:`${m.score}%`,height:'100%',borderRadius:99,transition:'width 600ms'}}/>
+          </div>
+          <div style={{fontSize:11,color:'#9e9080',marginTop:4}}>{m.sessions} sessions completed</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ── PROFILE SCREEN ── */
+function ProfileScreen() {
+  const items = [
+    { label:'My Consultant', value:'Elfe (Managing Partner)' },
+    { label:'Programme', value:'K9→H1 Protocol' },
+    { label:'Started', value:'1 March 2026' },
+    { label:'Breed', value:'West Highland Terrier' },
+    { label:'Human name', value:'David (stubborn, improving)' },
+  ];
+  return (
+    <div style={{background:'#fafaf8'}}>
+      <div style={{background:'#1e3a2f',padding:'24px 24px 40px',textAlign:'center'}}>
+        <div style={{width:80,height:80,background:'rgba(255,255,255,.1)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 14px',border:'2px solid rgba(168,201,181,.3)'}}>
+          <svg width="60" height="38" viewBox="0 0 150 82" fill="none">
+            <g fill="#f7f3ec">
+              <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+              <rect x="6" y="28" width="42" height="23" rx="9"/>
+              <rect x="8" y="47" width="8" height="20" rx="4"/>
+              <rect x="30" y="47" width="8" height="20" rx="4"/>
+              <rect x="38" y="47" width="8" height="20" rx="4"/>
+              <circle cx="48" cy="26" r="14"/>
+              <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+              <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+              <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+              <circle cx="46" cy="21" r="2.8" fill="#1e3a2f"/>
+              <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#1e3a2f"/>
+            </g>
+            <g transform="translate(150,0) scale(-1,1)" fill="#f7f3ec">
+              <path d="M 8 32 C 3 24 3 14 7 9 C 11 4 14 9 13 17 C 12 24 10 28 8 32 Z"/>
+              <rect x="6" y="28" width="42" height="23" rx="9"/>
+              <rect x="8" y="47" width="8" height="20" rx="4"/>
+              <rect x="30" y="47" width="8" height="20" rx="4"/>
+              <rect x="38" y="47" width="8" height="20" rx="4"/>
+              <circle cx="48" cy="26" r="14"/>
+              <path d="M 41 16 C 38 9 41 2 45 2 C 49 2 51 9 49 16 Z"/>
+              <ellipse cx="60" cy="30" rx="8" ry="5.5"/>
+              <ellipse cx="58" cy="37" rx="6.5" ry="5"/>
+              <circle cx="46" cy="21" r="2.8" fill="#1e3a2f"/>
+              <ellipse cx="67" cy="27" rx="2.5" ry="2" fill="#1e3a2f"/>
+            </g>
+          </svg>
+        </div>
+        <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:500,color:'#f7f3ec',marginBottom:4}}>Rufus T.</h2>
+        <span style={{background:'rgba(240,185,120,.2)',color:'#f0b978',fontSize:10,fontWeight:700,padding:'3px 12px',borderRadius:99,letterSpacing:'.1em'}}>K9→H1 CLIENT</span>
+      </div>
+      <div style={{padding:'20px'}}>
+        <div style={{background:'white',borderRadius:14,border:'1px solid #e8d9c0',overflow:'hidden',marginBottom:16}}>
+          {items.map((item,i)=>(
+            <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'13px 16px',borderBottom: i<items.length-1?'1px solid #f0f5f2':undefined}}>
+              <span style={{fontSize:13,color:'#9e9080'}}>{item.label}</span>
+              <span style={{fontSize:13,fontWeight:500,color:'#1c1c1a'}}>{item.value}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{background:'white',borderRadius:14,border:'1px solid #e8d9c0',overflow:'hidden'}}>
+          {['Notification preferences','Session history','Payment & billing','Refer a fellow dog','Help & support','Sign out'].map((item,i,arr)=>(
+            <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 16px',borderBottom:i<arr.length-1?'1px solid #f0f5f2':undefined,cursor:'pointer',color: item==='Sign out'?'#8b3030':'#1c1c1a'}}>
+              <span style={{fontSize:14}}>{item}</span>
+              {item!=='Sign out' && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9e9080" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── ROOT APP ── */
+function App() {
+  const [tab, setTab] = useState('home');
+  const screens = { home: HomeScreen, services: ServicesScreen, progress: ProgressScreen, profile: ProfileScreen };
+  const Screen = screens[tab];
+
+  const tabs = [
+    { id:'home',     label:'Home',     Icon: HomeIcon },
+    { id:'services', label:'Services', Icon: ServicesIcon },
+    { id:'progress', label:'Progress', Icon: ProgressIcon },
+    { id:'profile',  label:'Profile',  Icon: ProfileIcon },
+  ];
+
+  const statusBg = tab === 'home' ? '#1e3a2f' : '#fafaf8';
+  const timeColor = tab === 'home';
+
+  return (
+    <div style={{display:'flex',gap:32,alignItems:'flex-start',flexWrap:'wrap',justifyContent:'center'}}>
+      {/* Phone 1: current screen */}
+      <div>
+        <div style={{textAlign:'center',fontFamily:"'DM Sans',sans-serif",fontSize:11,fontWeight:600,letterSpacing:'.12em',textTransform:'uppercase',color:'#6b6057',marginBottom:12}}>Interactive App</div>
+        <div className="phone">
+          <div className="phone-screen">
+            <div className="status-bar" style={{background: statusBg}}>
+              <span className="status-time" style={{color: timeColor?'#f7f3ec':'#1c1c1a'}}>9:41</span>
+              <div className="status-icons">
+                <svg width="16" height="12" viewBox="0 0 16 12" fill={timeColor?'#f7f3ec':'#1c1c1a'}><rect x="0" y="4" width="3" height="8" rx="1"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1"/><rect x="9" y="1" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" opacity=".3"/></svg>
+                <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke={timeColor?'#f7f3ec':'#1c1c1a'} strokeWidth="1.2"><path d="M0.75 3.5C3.4 1.2 8.35-.3 14.25 3.5"/><path d="M2.75 6C5 4.2 9 3.5 12.25 6"/><path d="M5 8.5C6.5 7.5 8.5 7.2 10 8.5"/><circle cx="7.5" cy="11" r="1" fill={timeColor?'#f7f3ec':'#1c1c1a'} stroke="none"/></svg>
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke={timeColor?'#f7f3ec':'#1c1c1a'} strokeOpacity=".35"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill={timeColor?'#f7f3ec':'#1c1c1a'}/><path d="M23 4v4c.8-.5 1.5-1.2 1.5-2S23.8 4.5 23 4z" fill={timeColor?'#f7f3ec':'#1c1c1a'} opacity=".4"/></svg>
+              </div>
+            </div>
+            <div className="scroll-content">
+              <Screen/>
+            </div>
+            <div className="tab-bar">
+              {tabs.map(t=>(
+                <div key={t.id} className={`tab ${tab===t.id?'active':''}`} onClick={()=>setTab(t.id)}>
+                  <t.Icon active={tab===t.id}/>
+                  <span className="tab-label" style={{color:tab===t.id?'#1e3a2f':'#9e9080'}}>{t.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
